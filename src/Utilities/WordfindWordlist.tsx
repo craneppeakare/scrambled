@@ -1,4 +1,4 @@
-const Wordlist = [
+export const Wordlist = [
   "aarrghh",
   "abalone",
   "abandon",
@@ -24001,5 +24001,3 @@ const Wordlist = [
   "zymurgy",
   "zyzzyva",
 ];
-
-export default Wordlist;

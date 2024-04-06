@@ -1,7 +1,8 @@
 import { Button, useTheme } from "@mui/material";
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useContext } from "react";
 import CSS from "csstype";
 import { TilePointValue } from "../Utilities/Constants";
+import { ConfigContext } from "./ConfigContext";
 
 const ButtonStyles: CSS.Properties = {
   width: "100px",
@@ -27,12 +28,14 @@ const scoreStyles: CSS.Properties = {
   fontSize: "20px",
 };
 
-interface TileProps extends PropsWithChildren<any> {
+interface TileProps {
   onClick: (letter: string) => void;
+  highlight: "primary" | "success" | "error" | "info";
   letter: string | null;
 }
 
-export default function Tile({ onClick, letter = null, children }: TileProps) {
+export default function Tile({ onClick, highlight, letter = null }: TileProps) {
+  const { configs } = useContext(ConfigContext);
   const themes = useTheme();
   const score = letter != null ? TilePointValue[letter] : "";
 
@@ -42,6 +45,7 @@ export default function Tile({ onClick, letter = null, children }: TileProps) {
         <>
           <Button
             className="tile"
+            color={highlight}
             aria-label={letter + "-tile-" + score + "-points"}
             onClick={() => onClick(letter)}
             style={ButtonStyles}
@@ -49,7 +53,11 @@ export default function Tile({ onClick, letter = null, children }: TileProps) {
           >
             {letter}
           </Button>
-          <p style={scoreStyles}>{score}</p>
+          {configs.showTileScore === true ? (
+            <p style={scoreStyles}>{score}</p>
+          ) : (
+            <></>
+          )}
         </>
       ) : (
         <Button

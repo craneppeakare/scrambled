@@ -29,32 +29,33 @@ export const TilePointValue: Record<string, number> = {
 };
 
 // Double the frequency if for 4 players
-export const TileFrequency: Record<string, number> = {
-  A: 9,
-  B: 2,
-  C: 2,
-  D: 4,
-  E: 12,
-  F: 2,
-  G: 3,
-  H: 2,
-  I: 9,
-  J: 1,
-  K: 1,
-  L: 4,
-  M: 2,
-  N: 6,
-  O: 8,
-  P: 2,
-  Q: 1,
-  R: 6,
-  S: 4,
-  T: 6,
-  U: 4,
-  V: 2,
-  W: 2,
-  X: 1,
-  Y: 2,
-  Z: 1,
-  " ": 2,
-};
+// prettier-ignore
+export const TileBag = [
+  "A", "A", "A", "A", "A", "A", "A", "A", "A", // 9 As
+  "B", "B", // 2 Bs
+  "C", "C", // 2 Cs
+  "D", "D", "D", "D", // 4 Ds
+  "E", "E", "E", "E", "E", "E", "E", "E", "E", "E", "E", "E", // 12 Es
+  "F", "F", // 2 Fs
+  "G", "G", "G", // 3 Gs
+  "H", "H", // 2 Hs
+  "I", "I", "I", "I", "I", "I", "I", "I", "I", // 9 Is
+  "J", // 1 J
+  "K", // 1 K
+  "L", "L", "L", "L", // 4 Ls
+  "M", "M", // 2 Ms
+  "N", "N", "N", "N", "N", "N", // 6 Ns
+  "O", "O", "O", "O", "O", "O", "O", "O", // 8 Os
+  "P", "P", // 2 Ps
+  "Q", // 1 Q
+  "R", "R", "R", "R", "R", "R", // 6 Rs
+  "S", "S", "S", "S", // 4 Ss
+  "T", "T", "T", "T", "T", "T", // 6 Ts
+  "U", "U", "U", "U", // 4 Us
+  "V", "V", // 2 Vs
+  "W", "W", // 2 Ws
+  "X", // 1 X
+  "Y", "Y", // 2 Ys
+  "Z", // 1 Z
+  " ", " " // 2 blank tiles,
+];

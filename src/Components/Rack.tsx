@@ -1,16 +1,14 @@
-import { PropsWithChildren } from "react";
 import CSS from "csstype";
 import Tile from "./Tile";
-
-const hand_size = 7;
 
 export function shuffleRack(rack: (string | null)[]): (string | null)[] {
   let newRack: (string | null)[] = [];
   let picked = 0xff;
 
-  for (let j = 0; j < hand_size; j++) {
-    let i = Math.floor(Math.random() * hand_size);
-    while (((picked >> i) & 1) === 0) i = Math.floor(Math.random() * hand_size);
+  for (let j = 0; j < rack.length; j++) {
+    let i = Math.floor(Math.random() * rack.length);
+    while (((picked >> i) & 1) === 0)
+      i = Math.floor(Math.random() * rack.length);
     newRack.push(rack[i]);
     picked ^= 1 << i;
   }
@@ -24,12 +22,13 @@ const styles: CSS.Properties = {
   justifyContent: "center",
 };
 
-interface RackProps extends PropsWithChildren<any> {
+interface RackProps {
   onClick: (i: number, letter: string) => void;
   rack: (string | null)[];
+  highlight: ("primary" | "success" | "error" | "info")[];
 }
 
-export default function Rack({ onClick, rack, children }: RackProps) {
+export default function Rack({ onClick, rack, highlight }: RackProps) {
   return (
     <div style={styles}>
       <>
@@ -37,6 +36,7 @@ export default function Rack({ onClick, rack, children }: RackProps) {
           <Tile
             letter={letter}
             onClick={(letter) => onClick(idx, letter)}
+            highlight={highlight[idx]}
             key={idx}
           />
         ))}

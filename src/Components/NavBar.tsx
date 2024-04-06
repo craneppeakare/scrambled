@@ -1,6 +1,6 @@
-import { AppBar, Toolbar, IconButton, Typography } from "@mui/material";
+import { AppBar, Toolbar, Typography } from "@mui/material";
 import CSS from "csstype";
-import SettingsIcon from "@mui/icons-material/Settings";
+import SettingsIconButton from "./SettingsIconButton";
 
 const titleStyles: CSS.Properties = {
   flexGrow: 1,
@@ -11,7 +11,11 @@ const titleStyles: CSS.Properties = {
   margin: "0px",
 };
 
-export default function NavBar() {
+type NavBarProps = {
+  rerender: () => void;
+};
+
+export default function NavBar({ rerender }: NavBarProps) {
   return (
     <AppBar position="sticky" color="secondary" enableColorOnDark>
       <Toolbar>
@@ -19,14 +23,7 @@ export default function NavBar() {
           SCRAMBLED
         </Typography>
 
-        <IconButton
-          aria-label="settings"
-          size="large"
-          color="primary"
-          style={{}}
-        >
-          <SettingsIcon sx={{ fontSize: "50px" }} />
-        </IconButton>
+        <SettingsIconButton rerender={rerender} />
       </Toolbar>
     </AppBar>
   );

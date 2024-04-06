@@ -4,11 +4,15 @@ import "@fontsource/roboto";
 import "@fontsource-variable/roboto-mono";
 import Game from "./Components/Game";
 import NavBar from "./Components/NavBar";
+import ConfigsProvider from "./Components/ConfigContext/ConfigContext";
+import configData from "./Components/ConfigContext/config.json";
+import { useState } from "react";
 
 const theme = createTheme({
   palette: {
+    mode: "dark",
     primary: {
-      main: "#f0f0f0",
+      main: "#f3f3f3",
     },
     secondary: {
       main: "#111111",
@@ -26,15 +30,23 @@ const styles: CSS.Properties = {
 };
 
 function App() {
+  const [rerender, setRerender] = useState(true);
+
+  const forceRerender = () => {
+    setRerender(!rerender);
+  };
+
   return (
-    <ThemeProvider theme={theme}>
-      <div className="App">
-        <header style={styles} className="App-header">
-          <NavBar />
-          <Game />
-        </header>
-      </div>
-    </ThemeProvider>
+    <ConfigsProvider configJson={configData}>
+      <ThemeProvider theme={theme}>
+        <div className="App">
+          <header style={styles} className="App-header">
+            <NavBar rerender={forceRerender} />
+            <Game />
+          </header>
+        </div>
+      </ThemeProvider>
+    </ConfigsProvider>
   );
 }
 

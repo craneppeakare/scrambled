@@ -16,6 +16,7 @@ interface ButtonControlsProps {
   setRackState: React.Dispatch<React.SetStateAction<(string | null)[]>>;
   selectionState: (string | null)[];
   setSelectionState: React.Dispatch<React.SetStateAction<(string | null)[]>>;
+  onSubmitCallback: Function;
   getNewWord: () => void;
 }
 
@@ -25,6 +26,7 @@ export default function ButtonControls({
   setRackState,
   selectionState,
   setSelectionState,
+  onSubmitCallback,
   getNewWord,
 }: ButtonControlsProps) {
   function clearSelection() {
@@ -64,6 +66,7 @@ export default function ButtonControls({
       <SubmitModalButton
         submission={selectionState}
         answerkey={answerKeyState}
+        onSubmitCallback={onSubmitCallback}
         successCloseEffect={() => getNewWord()}
       >
         Submit

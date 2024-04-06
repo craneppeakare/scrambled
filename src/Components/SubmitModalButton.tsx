@@ -33,6 +33,7 @@ interface SubmitModalButtonProps extends PropsWithChildren<any> {
   submission: (string | null)[];
   answerkey: string[];
   successCloseEffect?: () => any;
+  onSubmitCallback: Function;
   color?: any;
   ariaLabel?: string;
 }
@@ -41,6 +42,7 @@ export default function SubmitModalButton({
   submission,
   answerkey,
   successCloseEffect,
+  onSubmitCallback,
   color = "primary",
   ariaLabel = "",
   children,
@@ -60,6 +62,7 @@ export default function SubmitModalButton({
     } else {
       setInvalidModalOpen(true);
     }
+    onSubmitCallback();
   }
 
   return (

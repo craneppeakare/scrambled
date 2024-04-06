@@ -1,9 +1,14 @@
 import CSS from "csstype";
 import Rack, { shuffleRack } from "./Rack";
-import { useEffect, useState } from "react";
-import Wordlist from "../Utilities/Wordlist";
+import { useContext, useEffect, useState } from "react";
+import { Wordlist as WordfindList } from "../Utilities/WordfindWordlist";
+import { Wordlist as WordnikList } from "../Utilities/WordnikWordlist";
 import ButtonControls from "./ButtonControls";
 import { findAllAnswers } from "../Utilities/Common";
+import { TileBag } from "../Utilities/Constants";
+import { ConfigContext } from "./ConfigContext";
+
+const hand_size = 7;
 
 const styles: CSS.Properties = {
   justifyContent: "center",
@@ -12,7 +17,9 @@ const styles: CSS.Properties = {
 };
 
 export default function Game() {
+  const { configs } = useContext(ConfigContext);
   const [answerKeyState, setAnswerKeyState] = useState<string[]>([]);
+  // TODO - these are not very good for variable rack lengths
   const [selectionState, setSelectionState] = useState<(string | null)[]>([
     null,
     null,
@@ -23,20 +30,45 @@ export default function Game() {
     null,
   ]);
   const [rackState, setRackState] = useState<(string | null)[]>([
-    "A",
-    "B",
-    "C",
-    "D",
-    "E",
-    "F",
-    "G",
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+  ]);
+  const [rackColors, setRackColors] = useState<
+    ("primary" | "success" | "error" | "info")[]
+  >([
+    "primary",
+    "primary",
+    "primary",
+    "primary",
+    "primary",
+    "primary",
+    "primary",
+  ]);
+  const [selColors, setSelColors] = useState<
+    ("primary" | "success" | "error" | "info")[]
+  >([
+    "primary",
+    "primary",
+    "primary",
+    "primary",
+    "primary",
+    "primary",
+    "primary",
   ]);
 
   // remove from selection and add to rack
   function handleClickSelection(idx: number, letter: string) {
     let sRack = [...selectionState];
+    let sColors = [...selColors];
     sRack[idx] = null;
+    sColors[idx] = "primary";
     setSelectionState(sRack);
+    setSelColors(sColors);
 
     let rack = [...rackState];
     idx = rack.indexOf(null);
@@ -56,30 +88,95 @@ export default function Game() {
     setSelectionState(selRack);
   }
 
+  function onSubmit() {
+    if (configs.easyModeEnabled) {
+      let submission = [...selectionState];
+      let sColors = [...selColors];
+      for (let i = 0; i < submission.length; i++) {
+        if (submission[i] === answerKeyState[0][i]) sColors[i] = "success";
+        else sColors[i] = "error";
+      }
+      setSelColors(sColors);
+    } else {
+      setSelColors([
+        "primary",
+        "primary",
+        "primary",
+        "primary",
+        "primary",
+        "primary",
+        "primary",
+      ]);
+    }
+  }
+
   function getNewWord() {
-    let i = Math.floor(Math.random() * Wordlist.length);
-    const newWord = Wordlist[i].toUpperCase();
-    const answers = findAllAnswers(Wordlist[i], Wordlist);
+    let answers: string[] = [];
+    let newRack: (string | null)[] = [];
+
+    while (answers.length <= 0) {
+      newRack = [];
+      let tilebag = [...TileBag];
+      for (let i = 0; i < hand_size; i++) {
+        let rand = Math.floor(Math.random() * TileBag.length);
+        if (tilebag[rand] === " ") {
+          // DEBUG - DON'T ALLOW BLANK TILES YET
+          i--;
+          continue;
+        }
+        newRack.push(tilebag.splice(rand, 1)[0]);
+      }
+
+      let wordlist;
+      switch (configs.wordlist) {
+        case "wordnik":
+          wordlist = WordnikList;
+          break;
+        default:
+        case "wordfind":
+          wordlist = WordfindList;
+          break;
+      }
+      answers = findAllAnswers(newRack.join(""), wordlist);
+    }
+
     console.log("answer keys: " + JSON.stringify(answers));
     setAnswerKeyState(answers);
     setSelectionState([null, null, null, null, null, null, null]);
-    let newRack: (string | null)[] = [];
-    for (let i = 0; i < newWord.length; i++) {
-      let c = newWord.at(i);
-      if (c !== undefined) newRack.push(c);
-    }
     setRackState(shuffleRack(newRack));
+    setRackColors([
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+    ]);
+    setSelColors([
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+    ]);
   }
 
   useEffect(() => getNewWord(), []);
 
   return (
     <div style={styles}>
-      <Rack rack={selectionState} onClick={handleClickSelection} />
+      <Rack
+        rack={selectionState}
+        highlight={selColors}
+        onClick={handleClickSelection}
+      />
 
       <div className="spacer" style={{ height: "100px" }} />
 
-      <Rack rack={rackState} onClick={handleClickRack} />
+      <Rack rack={rackState} highlight={rackColors} onClick={handleClickRack} />
 
       <div className="spacer" style={{ height: "80px" }} />
 
@@ -89,6 +186,7 @@ export default function Game() {
         setRackState={setRackState}
         selectionState={selectionState}
         setSelectionState={setSelectionState}
+        onSubmitCallback={onSubmit}
         getNewWord={getNewWord}
       />
     </div>
