@@ -2,7 +2,17 @@ import { PropsWithChildren, useState } from "react";
 import CSS from "csstype";
 import Button from "@mui/material/Button";
 import Modal from "@mui/material/Modal";
-import { Box } from "@mui/material";
+import { Box, useMediaQuery } from "@mui/material";
+
+const styles: CSS.Properties = {
+  fontSize: "24px",
+  margin: "5px",
+};
+
+const mobileStyles: CSS.Properties = {
+  fontSize: "14px",
+  margin: "5px",
+};
 
 const modalStyles: CSS.Properties = {
   position: "absolute" as "absolute",
@@ -25,6 +35,27 @@ const modalStyles: CSS.Properties = {
   fontSize: "30px",
 };
 
+const mobileModalStyles: CSS.Properties = {
+  position: "absolute" as "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  height: "75px",
+  width: "200px",
+  backgroundColor: "#1f1f1f",
+  border: "solid",
+  borderWidth: "2px",
+  borderColor: "white",
+  boxShadow: "24",
+
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  textAlign: "center",
+  color: "white",
+  fontSize: "16px",
+};
+
 interface ModalButtonProps extends PropsWithChildren<any> {
   modalText: string;
   closeEffect?: () => any;
@@ -40,13 +71,14 @@ export default function ModalButton({
   children,
 }: ModalButtonProps) {
   const [modalOpen, setModalOpen] = useState(false);
+  const isMobile = useMediaQuery("(max-width:800px)");
   return (
     <>
       <Button
         variant="outlined"
         aria-label={ariaLabel}
         color={color}
-        style={{ fontSize: "24px" }}
+        style={isMobile ? mobileStyles : styles}
         onClick={() => setModalOpen(true)}
       >
         {children}
@@ -59,7 +91,7 @@ export default function ModalButton({
         }}
         aria-labelledby={ariaLabel}
       >
-        <Box sx={modalStyles}>{modalText}</Box>
+        <Box sx={isMobile ? mobileModalStyles : modalStyles}>{modalText}</Box>
       </Modal>
     </>
   );

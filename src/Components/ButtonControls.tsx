@@ -1,11 +1,22 @@
-import { Button } from "@mui/material";
+import { Button, useMediaQuery } from "@mui/material";
 import ModalButton from "./ModalButton";
 import SubmitModalButton from "./SubmitModalButton";
 import CSS from "csstype";
 import { shuffleRack } from "./Rack";
 
 const styles: CSS.Properties = {
+  fontSize: "24px",
+  margin: "5px",
+};
+
+const mobileStyles: CSS.Properties = {
+  fontSize: "14px",
+  margin: "5px",
+};
+
+const rowStyles: CSS.Properties = {
   display: "flex",
+  flexWrap: "wrap",
   width: "100%",
   justifyContent: "space-around",
 };
@@ -38,9 +49,10 @@ export default function ButtonControls({
     setRackState(newRack);
     setSelectionState([null, null, null, null, null, null, null]);
   }
+  const isMobile = useMediaQuery("(max-width:800px)");
 
   return (
-    <div style={styles}>
+    <div style={rowStyles}>
       <ModalButton
         modalText={"The answer(s): " + answerKeyState.join(", ")}
         closeEffect={() => getNewWord()}
@@ -51,14 +63,14 @@ export default function ButtonControls({
       </ModalButton>
       <Button
         variant="outlined"
-        style={{ fontSize: "24px" }}
+        style={isMobile ? mobileStyles : styles}
         onClick={clearSelection}
       >
         Clear
       </Button>
       <Button
         variant="outlined"
-        style={{ fontSize: "24px" }}
+        style={isMobile ? mobileStyles : styles}
         onClick={() => setRackState(shuffleRack(rackState))}
       >
         Shuffle

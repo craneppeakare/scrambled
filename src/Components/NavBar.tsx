@@ -6,7 +6,7 @@ const titleStyles: CSS.Properties = {
   flexGrow: 1,
   color: "white",
   fontFamily: "Monospace",
-  fontSize: "64px",
+  fontSize: "48px",
   textAlign: "center",
   margin: "0px",
 };
@@ -19,7 +19,7 @@ export default function NavBar({ rerender }: NavBarProps) {
   return (
     <AppBar position="sticky" color="secondary" enableColorOnDark>
       <Toolbar>
-        <Typography variant="h6" component="div" sx={titleStyles}>
+        <Typography component="div" sx={titleStyles}>
           SCRAMBLED
         </Typography>
 

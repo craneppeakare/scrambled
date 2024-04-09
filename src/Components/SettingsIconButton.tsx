@@ -11,13 +11,12 @@ import {
   Typography,
   Divider,
   Slider,
+  useMediaQuery,
 } from "@mui/material";
 import CSS from "csstype";
 import SettingsIcon from "@mui/icons-material/Settings";
 import { useContext, useState } from "react";
 import { ConfigContext } from "./ConfigContext/ConfigContext";
-
-const styles: CSS.Properties = {};
 
 const modalStyles: CSS.Properties = {
   position: "absolute" as "absolute",
@@ -41,6 +40,28 @@ const modalStyles: CSS.Properties = {
   fontSize: "30px",
 };
 
+const mobileModalStyles: CSS.Properties = {
+  position: "absolute" as "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  height: "650px",
+  width: "350px",
+  backgroundColor: "#222222",
+  border: "solid",
+  borderWidth: "2px",
+  borderColor: "white",
+  boxShadow: "24",
+
+  padding: "20px 20px",
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "left",
+  textAlign: "left",
+  color: "white",
+  fontSize: "18px",
+};
+
 const labelStyles: CSS.Properties = {
   fontSize: "24px",
   fontWeight: "bold",
@@ -57,6 +78,7 @@ export default function SettingsIconButton({
   const [refreshModal, setRefreshModal] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const { configs, addConfig } = useContext(ConfigContext);
+  const isMobile = useMediaQuery("(max-width:800px)");
 
   return (
     <>
@@ -78,8 +100,8 @@ export default function SettingsIconButton({
         }}
         aria-labelledby={"some-label"}
       >
-        <Box sx={modalStyles}>
-          <Typography variant="h3" align="center" padding="10px">
+        <Box sx={isMobile ? mobileModalStyles : modalStyles}>
+          <Typography variant="h4" align="center" padding="5px">
             Settings
           </Typography>
           <Divider />
