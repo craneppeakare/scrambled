@@ -7,8 +7,7 @@ import ButtonControls from "./ButtonControls";
 import { findAllAnswers } from "../Utilities/Common";
 import { TileBag } from "../Utilities/Constants";
 import { ConfigContext } from "./ConfigContext";
-
-const hand_size = 7;
+import TileSelectorModal from "./TileSelectorModal";
 
 const styles: CSS.Properties = {
   justifyContent: "center",
@@ -18,6 +17,8 @@ const styles: CSS.Properties = {
 
 export default function Game() {
   const { configs } = useContext(ConfigContext);
+  const [tileSelectorModalOpen, setTileSelectorModalOpen] = useState(false);
+  const [blankIdxState, setBlankIdxState] = useState(0);
   const [answerKeyState, setAnswerKeyState] = useState<string[]>([]);
   // TODO - these are not very good for variable rack lengths
   const [selectionState, setSelectionState] = useState<(string | null)[]>([
@@ -65,6 +66,7 @@ export default function Game() {
   function handleClickSelection(idx: number, letter: string) {
     let sRack = [...selectionState];
     let sColors = [...selColors];
+    const colorCopy = sColors[idx];
     sRack[idx] = null;
     sColors[idx] = "primary";
     setSelectionState(sRack);
@@ -72,12 +74,25 @@ export default function Game() {
 
     let rack = [...rackState];
     idx = rack.indexOf(null);
+    let rColors = [...rackColors];
+    if (colorCopy === "info") {
+      rColors[idx] = "info";
+      letter = " ";
+    } else {
+      rColors[idx] = "primary";
+    }
     rack[idx] = letter;
+    setRackColors(rColors);
     setRackState(rack);
   }
 
   // remove from rack and add to selection
   function handleClickRack(idx: number, letter: string) {
+    if (rackState[idx] === " ") {
+      setBlankIdxState(idx);
+      setTileSelectorModalOpen(true);
+      return;
+    }
     let rack = [...rackState];
     rack[idx] = null;
     setRackState(rack);
@@ -88,25 +103,33 @@ export default function Game() {
     setSelectionState(selRack);
   }
 
+  function addBlankToSel(letter: string) {
+    let rack = [...rackState];
+    rack[blankIdxState] = null;
+    setRackState(rack);
+
+    let selRack = [...selectionState];
+    const idx = selRack.indexOf(null);
+    selRack[idx] = letter;
+    setSelectionState(selRack);
+
+    let sColors = [...selColors];
+    sColors[idx] = "info";
+    setSelColors(sColors);
+  }
+
   function onSubmit() {
     if (configs.easyModeEnabled) {
       let submission = [...selectionState];
       let sColors = [...selColors];
       for (let i = 0; i < submission.length; i++) {
-        if (submission[i] === answerKeyState[0][i]) sColors[i] = "success";
+        if (selColors[i] === "info") sColors[i] = "info";
+        else if (submission[i] === answerKeyState[0][i]) sColors[i] = "success";
         else sColors[i] = "error";
       }
       setSelColors(sColors);
     } else {
-      setSelColors([
-        "primary",
-        "primary",
-        "primary",
-        "primary",
-        "primary",
-        "primary",
-        "primary",
-      ]);
+      setSelColors(selColors.map((s) => (s == "info" ? "info" : "primary")));
     }
   }
 
@@ -117,10 +140,9 @@ export default function Game() {
     while (answers.length <= 0) {
       newRack = [];
       let tilebag = [...TileBag];
-      for (let i = 0; i < hand_size; i++) {
+      for (let i = 0; i < configs.handSize; i++) {
         let rand = Math.floor(Math.random() * TileBag.length);
-        if (tilebag[rand] === " ") {
-          // DEBUG - DON'T ALLOW BLANK TILES YET
+        if (configs.blankTilesOn === false && tilebag[rand] === " ") {
           i--;
           continue;
         }
@@ -188,6 +210,17 @@ export default function Game() {
         setSelectionState={setSelectionState}
         onSubmitCallback={onSubmit}
         getNewWord={getNewWord}
+      />
+
+      <TileSelectorModal
+        callback={(l) => {
+          setTileSelectorModalOpen(false);
+          addBlankToSel(l);
+        }}
+        modalOpen={tileSelectorModalOpen}
+        onClose={() => {
+          setTileSelectorModalOpen(false);
+        }}
       />
     </div>
   );

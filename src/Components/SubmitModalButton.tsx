@@ -19,7 +19,7 @@ const modalStyles: CSS.Properties = {
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  height: "150px",
+  minHeight: "150px",
   width: "400px",
   backgroundColor: "#1f1f1f",
   border: "solid",
@@ -40,7 +40,7 @@ const mobileModalStyles: CSS.Properties = {
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  height: "75px",
+  minHeight: "75px",
   width: "200px",
   backgroundColor: "#1f1f1f",
   border: "solid",
@@ -114,6 +114,10 @@ export default function SubmitModalButton({
       >
         <Box sx={isMobile ? mobileModalStyles : modalStyles}>
           Yay you found the bingo!
+          {answerkey.length > 1
+            ? " Other possible answers: " +
+              answerkey.filter((w) => w !== submission.join("")).join(", ")
+            : ""}
         </Box>
       </Modal>
       <Modal

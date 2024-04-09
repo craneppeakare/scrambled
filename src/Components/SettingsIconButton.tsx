@@ -171,9 +171,15 @@ export default function SettingsIconButton({
             />
             <FormControlLabel
               control={<Switch />}
-              label="Enable black tiles"
-              onChange={() => console.log("beep boop TODO")}
-              disabled // TODO - remove disable this!
+              label="Enable blank tiles"
+              checked={configs.blankTilesOn}
+              onChange={() => {
+                addConfig(configs, {
+                  key: "blankTilesOn",
+                  value: !configs.blankTilesOn,
+                });
+                setRefreshModal(!refreshModal);
+              }}
             />
             <FormLabel
               id="select-dictionary-to-use-label"

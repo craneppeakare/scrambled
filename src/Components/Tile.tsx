@@ -30,6 +30,20 @@ const scoreStyles: CSS.Properties = {
   position: "absolute",
   right: "0px",
   bottom: "0px",
+  width: "30px",
+  height: "30px",
+
+  margin: "4px",
+  textAlign: "center",
+  pointerEvents: "none",
+  zIndex: "2",
+  fontSize: "20px",
+};
+
+const mobileScoreStyles: CSS.Properties = {
+  position: "absolute",
+  right: "0px",
+  bottom: "0px",
   width: "20px",
   height: "20px",
 
@@ -58,7 +72,9 @@ export default function Tile({ onClick, highlight, letter = null }: TileProps) {
         <>
           <Button
             className="tile"
-            color={highlight}
+            color={
+              letter === " " && highlight === "primary" ? "info" : highlight
+            }
             aria-label={letter + "-tile-" + score + "-points"}
             onClick={() => onClick(letter)}
             sx={isMobile ? mobileButtonStyles : ButtonStyles}
@@ -67,7 +83,9 @@ export default function Tile({ onClick, highlight, letter = null }: TileProps) {
             {letter}
           </Button>
           {configs.showTileScore === true ? (
-            <p style={scoreStyles}>{score}</p>
+            <p style={isMobile ? mobileScoreStyles : scoreStyles}>
+              {highlight === "info" ? 0 : score}
+            </p>
           ) : (
             <></>
           )}
