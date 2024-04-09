@@ -5,7 +5,7 @@ Train your mind to look for bingos. Set which dictionary to use. Live version ho
 ## Install
 
 ```
-git clone
+git clone https://github.com/craneppeakare/scrambled.git
 cd scrambled
 yarn install
 yarn run start
