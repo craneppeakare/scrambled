@@ -3,6 +3,6 @@
   "showTileScore": true,
   "easyModeEnabled": false,
   "proControlsOn": false,
-  "blankTilesOn": false,
+  "blankTilesOn": true,
   "handSize": 7
 }

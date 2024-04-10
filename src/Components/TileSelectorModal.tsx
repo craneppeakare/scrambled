@@ -1,19 +1,8 @@
-import { PropsWithChildren, useState } from "react";
+import { PropsWithChildren } from "react";
 import CSS from "csstype";
-import Button from "@mui/material/Button";
 import Modal from "@mui/material/Modal";
 import { Box, useMediaQuery } from "@mui/material";
 import Tile from "./Tile";
-
-const styles: CSS.Properties = {
-  fontSize: "24px",
-  margin: "5px",
-};
-
-const mobileStyles: CSS.Properties = {
-  fontSize: "14px",
-  margin: "5px",
-};
 
 const modalStyles: CSS.Properties = {
   position: "absolute",

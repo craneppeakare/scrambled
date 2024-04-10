@@ -2,7 +2,6 @@ import { Button, useMediaQuery } from "@mui/material";
 import ModalButton from "./ModalButton";
 import SubmitModalButton from "./SubmitModalButton";
 import CSS from "csstype";
-import { shuffleRack } from "./Rack";
 
 const styles: CSS.Properties = {
   fontSize: "24px",
@@ -23,32 +22,21 @@ const rowStyles: CSS.Properties = {
 
 interface ButtonControlsProps {
   answerKeyState: string[];
-  rackState: (string | null)[];
-  setRackState: React.Dispatch<React.SetStateAction<(string | null)[]>>;
   selectionState: (string | null)[];
-  setSelectionState: React.Dispatch<React.SetStateAction<(string | null)[]>>;
+  onClearCallback: Function;
+  onShuffleCallback: Function;
   onSubmitCallback: Function;
   getNewWord: () => void;
 }
 
 export default function ButtonControls({
   answerKeyState,
-  rackState,
-  setRackState,
   selectionState,
-  setSelectionState,
+  onClearCallback,
+  onShuffleCallback,
   onSubmitCallback,
   getNewWord,
 }: ButtonControlsProps) {
-  function clearSelection() {
-    let newRack = [...rackState];
-    let selRack = [...selectionState.filter((c) => c != null)];
-    newRack.forEach((c, i) => {
-      if (c == null) newRack[i] = selRack.shift() as string;
-    });
-    setRackState(newRack);
-    setSelectionState([null, null, null, null, null, null, null]);
-  }
   const isMobile = useMediaQuery("(max-width:800px)");
 
   return (
@@ -64,14 +52,14 @@ export default function ButtonControls({
       <Button
         variant="outlined"
         style={isMobile ? mobileStyles : styles}
-        onClick={clearSelection}
+        onClick={() => onClearCallback()}
       >
         Clear
       </Button>
       <Button
         variant="outlined"
         style={isMobile ? mobileStyles : styles}
-        onClick={() => setRackState(shuffleRack(rackState))}
+        onClick={() => onShuffleCallback()}
       >
         Shuffle
       </Button>

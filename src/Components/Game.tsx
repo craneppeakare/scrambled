@@ -1,5 +1,5 @@
 import CSS from "csstype";
-import Rack, { shuffleRack } from "./Rack";
+import Rack from "./Rack";
 import { useContext, useEffect, useState } from "react";
 import { Wordlist as WordfindList } from "../Utilities/WordfindWordlist";
 import { Wordlist as WordnikList } from "../Utilities/WordnikWordlist";
@@ -21,49 +21,22 @@ export default function Game() {
   const [blankIdxState, setBlankIdxState] = useState(0);
   const [answerKeyState, setAnswerKeyState] = useState<string[]>([]);
   // TODO - these are not very good for variable rack lengths
-  const [selectionState, setSelectionState] = useState<(string | null)[]>([
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-  ]);
-  const [rackState, setRackState] = useState<(string | null)[]>([
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-  ]);
+  const [selectionState, setSelectionState] = useState<(string | null)[]>(
+    Array(configs.handSize).fill(null)
+  );
+  const [rackState, setRackState] = useState<(string | null)[]>(
+    Array(configs.handSize).fill(null)
+  );
   const [rackColors, setRackColors] = useState<
     ("primary" | "success" | "error" | "info")[]
-  >([
-    "primary",
-    "primary",
-    "primary",
-    "primary",
-    "primary",
-    "primary",
-    "primary",
-  ]);
+  >(Array(configs.handSize).fill("primary"));
   const [selColors, setSelColors] = useState<
     ("primary" | "success" | "error" | "info")[]
-  >([
-    "primary",
-    "primary",
-    "primary",
-    "primary",
-    "primary",
-    "primary",
-    "primary",
-  ]);
+  >(Array(configs.handSize).fill("primary"));
 
   // remove from selection and add to rack
-  function handleClickSelection(idx: number, letter: string) {
+  function handleClickSelection(idx: number) {
+    let letter = selectionState[idx];
     let sRack = [...selectionState];
     let sColors = [...selColors];
     const colorCopy = sColors[idx];
@@ -87,8 +60,9 @@ export default function Game() {
   }
 
   // remove from rack and add to selection
-  function handleClickRack(idx: number, letter: string) {
-    if (rackState[idx] === " ") {
+  function handleClickRack(idx: number) {
+    const letter = rackState[idx];
+    if (letter === " ") {
       setBlankIdxState(idx);
       setTileSelectorModalOpen(true);
       return;
@@ -118,18 +92,56 @@ export default function Game() {
     setSelColors(sColors);
   }
 
+  function clearSelection() {
+    let newRack = [...rackState];
+    let rColors = [...rackColors];
+    for (let i = 0; i < configs.handSize; i++) {
+      const letter = selectionState[i];
+      if (letter === null) {
+        continue;
+      } else {
+        const idx = newRack.indexOf(null);
+        if (selColors[i] === "info") {
+          newRack[idx] = " ";
+          rColors[idx] = "info";
+        } else {
+          newRack[idx] = letter;
+          rColors[idx] = "primary";
+        }
+      }
+    }
+    setRackState(newRack);
+    setRackColors(rColors);
+    setSelectionState(Array(configs.handSize).fill(null));
+    setSelColors(Array(configs.handSize).fill("primary"));
+  }
+
+  function shuffleRack(rack: (string | null)[]): (string | null)[] {
+    let newRack: (string | null)[] = [];
+    let picked = 0xff;
+
+    for (let j = 0; j < rack.length; j++) {
+      let i = Math.floor(Math.random() * rack.length);
+      while (((picked >> i) & 1) === 0)
+        i = Math.floor(Math.random() * rack.length);
+      newRack.push(rack[i]);
+      picked ^= 1 << i;
+    }
+
+    return newRack;
+  }
+
   function onSubmit() {
     if (configs.easyModeEnabled) {
-      let submission = [...selectionState];
-      let sColors = [...selColors];
-      for (let i = 0; i < submission.length; i++) {
-        if (selColors[i] === "info") sColors[i] = "info";
-        else if (submission[i] === answerKeyState[0][i]) sColors[i] = "success";
-        else sColors[i] = "error";
-      }
-      setSelColors(sColors);
+      setSelColors(
+        selColors.map((c, i) => {
+          if (c === "info") return "info";
+          if (c === answerKeyState[0][i]) return "success";
+          return "error";
+        })
+      );
     } else {
-      setSelColors(selColors.map((s) => (s == "info" ? "info" : "primary")));
+      setSelColors(selColors.map((c) => (c === "info" ? "info" : "primary")));
     }
   }
 
@@ -166,24 +178,8 @@ export default function Game() {
     setAnswerKeyState(answers);
     setSelectionState([null, null, null, null, null, null, null]);
     setRackState(shuffleRack(newRack));
-    setRackColors([
-      "primary",
-      "primary",
-      "primary",
-      "primary",
-      "primary",
-      "primary",
-      "primary",
-    ]);
-    setSelColors([
-      "primary",
-      "primary",
-      "primary",
-      "primary",
-      "primary",
-      "primary",
-      "primary",
-    ]);
+    setRackColors(Array(configs.handSize).fill("primary"));
+    setSelColors(Array(configs.handSize).fill("primary"));
   }
 
   useEffect(() => getNewWord(), []);
@@ -204,10 +200,12 @@ export default function Game() {
 
       <ButtonControls
         answerKeyState={answerKeyState}
-        rackState={rackState}
-        setRackState={setRackState}
         selectionState={selectionState}
-        setSelectionState={setSelectionState}
+        onClearCallback={() => clearSelection()}
+        onShuffleCallback={() => {
+          setRackState(shuffleRack(rackState));
+          setRackColors(Array(configs.handSize).fill("primary"));
+        }}
         onSubmitCallback={onSubmit}
         getNewWord={getNewWord}
       />
