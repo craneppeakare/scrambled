@@ -1,9 +1,10 @@
-import { PropsWithChildren, useState } from "react";
+import { PropsWithChildren, useContext, useState } from "react";
 import CSS from "csstype";
 import Button from "@mui/material/Button";
 import Modal from "@mui/material/Modal";
 import { Box, useMediaQuery } from "@mui/material";
 import { TTile } from "../Types/Tile";
+import { ConfigContext } from "./ConfigContext";
 
 const styles: CSS.Properties = {
   fontSize: "24px",
@@ -60,7 +61,10 @@ const mobileModalStyles: CSS.Properties = {
 interface SubmitModalButtonProps extends PropsWithChildren<any> {
   submission: (TTile | null)[];
   answerkey: string[];
-  successCloseEffect?: () => any;
+  setAnswerkey: Function;
+  setAttemptsMade: Function;
+  attemptsMade: number;
+  getNewWord: () => void;
   color?: any;
   ariaLabel?: string;
 }
@@ -68,7 +72,10 @@ interface SubmitModalButtonProps extends PropsWithChildren<any> {
 export default function SubmitModalButton({
   submission,
   answerkey,
-  successCloseEffect,
+  setAnswerkey,
+  setAttemptsMade,
+  attemptsMade,
+  getNewWord,
   color = "primary",
   ariaLabel = "",
   children,
@@ -76,7 +83,12 @@ export default function SubmitModalButton({
   const [winModalOpen, setWinModalOpen] = useState(false);
   const [invalidModalOpen, setInvalidModalOpen] = useState(false);
   const [useTilesModalOpen, setUseTilesModalOpen] = useState(false);
+  const [failedAllTriesModalOpen, setFailedAllTriesModalOpen] = useState(false);
+  const [alreadySubmittedModalOpen, setAlreadySubmittedModalOpen] =
+    useState(false);
+  const [prevSubmitted, setPrevSubmitted] = useState<string[]>([]);
   const isMobile = useMediaQuery("(max-width:800px)");
+  const { configs } = useContext(ConfigContext);
 
   function submitSelection() {
     if (submission.some((t) => t == null)) {
@@ -84,10 +96,26 @@ export default function SubmitModalButton({
       return;
     }
     let s = submission.map((t) => t!.letter).join("");
-    if (answerkey.indexOf(s) !== -1) {
+    if (prevSubmitted.indexOf(s) !== -1) {
+      setAlreadySubmittedModalOpen(true);
+    } else if (answerkey.indexOf(s) !== -1) {
+      if (configs.hardModeOn) {
+        let ak = [...answerkey];
+        ak.splice(answerkey.indexOf(s), 1);
+        setAnswerkey(ak);
+
+        let ps = [...prevSubmitted];
+        ps.push(s);
+        setPrevSubmitted(ps);
+      }
       setWinModalOpen(true);
     } else {
-      setInvalidModalOpen(true);
+      if (!configs.infiniteTriesOn && attemptsMade + 1 >= configs.maxTries) {
+        setFailedAllTriesModalOpen(true);
+      } else {
+        setInvalidModalOpen(true);
+      }
+      if (!configs.infiniteTriesOn) setAttemptsMade(attemptsMade + 1);
     }
   }
 
@@ -106,16 +134,32 @@ export default function SubmitModalButton({
         open={winModalOpen}
         onClose={() => {
           setWinModalOpen(false);
-          if (successCloseEffect) successCloseEffect();
+          if (!configs.hardModeOn || answerkey.length === 0) {
+            setPrevSubmitted([]);
+            getNewWord();
+          }
         }}
         aria-labelledby="submit-selection"
       >
         <Box sx={isMobile ? mobileModalStyles : modalStyles}>
-          Yay you found the bingo!
-          {answerkey.length > 1
-            ? " Other possible answers: " +
-              answerkey.filter((w) => w !== submission.join("")).join(", ")
-            : ""}
+          Yay you found a bingo!
+          {configs.hardModeOn &&
+            answerkey.length > 0 &&
+            " More bingos are possible!"}
+          {!configs.hardModeOn &&
+            answerkey.length > 1 &&
+            " All possible answers: " + answerkey.join(", ")}
+        </Box>
+      </Modal>
+      <Modal
+        open={alreadySubmittedModalOpen}
+        onClose={() => {
+          setAlreadySubmittedModalOpen(false);
+        }}
+        aria-labelledby="repeat-submit-selection"
+      >
+        <Box sx={isMobile ? mobileModalStyles : modalStyles}>
+          You already submitted this answer!
         </Box>
       </Modal>
       <Modal
@@ -134,6 +178,21 @@ export default function SubmitModalButton({
       >
         <Box sx={isMobile ? mobileModalStyles : modalStyles}>
           Use all tiles before submitting!
+        </Box>
+      </Modal>
+      <Modal
+        open={failedAllTriesModalOpen}
+        onClose={() => {
+          setFailedAllTriesModalOpen(false);
+          getNewWord();
+        }}
+        aria-labelledby={ariaLabel}
+      >
+        <Box sx={isMobile ? mobileModalStyles : modalStyles}>
+          {"The " +
+            (configs.hardModeOn ? "remaining " : "") +
+            "answer(s): " +
+            answerkey.join(", ")}
         </Box>
       </Modal>
     </>

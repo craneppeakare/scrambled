@@ -9,11 +9,12 @@ import { TileBag } from "../Utilities/Constants";
 import { ConfigContext } from "./ConfigContext";
 import TileSelectorModal from "./TileSelectorModal";
 import { TTile } from "../Types/Tile";
+import TryCounter from "./TryCounter";
 
 const styles: CSS.Properties = {
   justifyContent: "center",
   margin: "auto",
-  width: "50%",
+  width: "60%",
 };
 
 export default function Game() {
@@ -27,6 +28,7 @@ export default function Game() {
     Array(configs.handSize).fill(null)
   );
   const [blankIdx, setBlankIdx] = useState(0);
+  const [attemptsMade, setAttemptsMade] = useState(0);
 
   // remove from selection and add to rack
   function handleClickSelection(idx: number) {
@@ -102,29 +104,43 @@ export default function Game() {
     let answers: string[] = [];
     let newRack: (TTile | null)[] = [];
 
+    let wordlist;
+    switch (configs.wordlist) {
+      case "wordnik":
+        wordlist = WordnikList;
+        break;
+      default:
+      case "wordfind":
+        wordlist = WordfindList;
+        break;
+    }
+
     while (answers.length <= 0) {
       newRack = [];
-      let tilebag = [...TileBag];
-      for (let i = 0; i < configs.handSize; i++) {
-        let rand = Math.floor(Math.random() * TileBag.length);
-        if (configs.blankTilesOn === false && tilebag[rand] === " ") {
-          i--;
-          continue;
+      if (configs.evenDistributionOn) {
+        let rand = Math.floor(Math.random() * wordlist.length);
+        newRack = wordlist[rand]
+          .toUpperCase()
+          .split("")
+          .map((c) => ({ letter: c, isBlank: false }));
+        // 13% chance to convert a tile to a blank tile
+        if (Math.random() < 0.13) {
+          let rand = Math.floor(Math.random() * configs.handSize);
+          newRack[rand] = { letter: " ", isBlank: true };
         }
-        const l = tilebag.splice(rand, 1)[0];
-        newRack.push({ letter: l, isBlank: l === " " });
+      } else {
+        let tilebag = [...TileBag];
+        for (let i = 0; i < configs.handSize; i++) {
+          let rand = Math.floor(Math.random() * TileBag.length);
+          if (configs.blankTilesOn === false && tilebag[rand] === " ") {
+            i--;
+            continue;
+          }
+          const l = tilebag.splice(rand, 1)[0];
+          newRack.push({ letter: l, isBlank: l === " " });
+        }
       }
 
-      let wordlist;
-      switch (configs.wordlist) {
-        case "wordnik":
-          wordlist = WordnikList;
-          break;
-        default:
-        case "wordfind":
-          wordlist = WordfindList;
-          break;
-      }
       answers = findAllAnswers(
         newRack.map((t) => t?.letter).join(""),
         wordlist
@@ -132,6 +148,7 @@ export default function Game() {
     }
 
     console.log("answer keys: " + JSON.stringify(answers));
+    setAttemptsMade(0);
     setAnswerKeyState(answers);
     setSelectionState(Array(configs.handSize).fill(null));
     setRackState(shuffleRack(newRack));
@@ -147,15 +164,22 @@ export default function Game() {
 
       <Rack rack={rackState} onClick={handleClickRack} />
 
-      <div className="spacer" style={{ height: "80px" }} />
+      <div className="spacer" style={{ height: "40px" }} />
+
+      {!configs.infiniteTriesOn && <TryCounter attempts={attemptsMade} />}
+
+      <div className="spacer" style={{ height: "20px" }} />
 
       <ButtonControls
-        answerKeyState={answerKeyState}
         selectionState={selectionState}
+        answerKeyState={answerKeyState}
+        setAnswerKeyState={setAnswerKeyState}
         onClearCallback={() => clearSelection()}
         onShuffleCallback={() => {
           setRackState(shuffleRack(rackState));
         }}
+        setAttemptsMade={setAttemptsMade}
+        attemptsMade={attemptsMade}
         getNewWord={getNewWord}
       />
 

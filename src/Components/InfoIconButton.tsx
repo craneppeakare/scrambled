@@ -82,12 +82,12 @@ export default function SettingsIconButton({}: InfoIconButtonProps) {
           </Typography>
           <Divider />
           <Typography variant="body1" padding="4px">
-            SCRAMBLED is an addictive online game, players are presented with
-            seven Scrabble tiles, each holding a letter. Your task? Unravel the
-            hidden mystery word by rearranging these tiles into the correct
-            sequence to form a bingo. With thousands of potential words waiting
-            to be discovered, every round promises a fresh challenge and an
-            opportunity to expand your vocabulary.
+            SCRAMBLED is an addictive online scrabble trainer. Players are
+            presented with seven Scrabble tiles, each holding a letter. Your
+            task? Unravel the hidden mystery word by rearranging these tiles
+            into the correct sequence to form a bingo. With thousands of
+            potential words waiting to be discovered, every round promises a
+            fresh challenge and an opportunity to expand your vocabulary.
           </Typography>
           <Divider />
           <Typography variant="h4" padding="4px">

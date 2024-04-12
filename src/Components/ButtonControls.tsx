@@ -3,6 +3,8 @@ import ModalButton from "./ModalButton";
 import SubmitModalButton from "./SubmitModalButton";
 import CSS from "csstype";
 import { TTile } from "../Types/Tile";
+import { ConfigContext } from "./ConfigContext";
+import { useContext } from "react";
 
 const styles: CSS.Properties = {
   fontSize: "24px",
@@ -23,25 +25,37 @@ const rowStyles: CSS.Properties = {
 
 interface ButtonControlsProps {
   answerKeyState: string[];
+  setAnswerKeyState: Function;
   selectionState: (TTile | null)[];
   onClearCallback: Function;
   onShuffleCallback: Function;
+  setAttemptsMade: Function;
+  attemptsMade: number;
   getNewWord: () => void;
 }
 
 export default function ButtonControls({
   answerKeyState,
+  setAnswerKeyState,
   selectionState,
   onClearCallback,
   onShuffleCallback,
+  setAttemptsMade,
+  attemptsMade,
   getNewWord,
 }: ButtonControlsProps) {
   const isMobile = useMediaQuery("(max-width:800px)");
+  const { configs } = useContext(ConfigContext);
 
   return (
     <div style={rowStyles}>
       <ModalButton
-        modalText={"The answer(s): " + answerKeyState.join(", ")}
+        modalText={
+          "The " +
+          (configs.hardModeOn ? "remaining " : "") +
+          "answer(s): " +
+          answerKeyState.join(", ")
+        }
         closeEffect={() => getNewWord()}
         color="error"
         ariaLabel="give-up-new-word"
@@ -65,7 +79,10 @@ export default function ButtonControls({
       <SubmitModalButton
         submission={selectionState}
         answerkey={answerKeyState}
-        successCloseEffect={() => getNewWord()}
+        setAnswerkey={setAnswerKeyState}
+        setAttemptsMade={setAttemptsMade}
+        attemptsMade={attemptsMade}
+        getNewWord={getNewWord}
       >
         Submit
       </SubmitModalButton>

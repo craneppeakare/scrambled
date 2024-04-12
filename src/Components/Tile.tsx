@@ -80,12 +80,10 @@ export default function Tile({ onClick, tile = null }: TileProps) {
           >
             {tile.letter}
           </Button>
-          {configs.showTileScore === true ? (
+          {configs.showTileScore === true && (
             <p style={isMobile ? mobileScoreStyles : scoreStyles}>
               {tile.isBlank ? 0 : score}
             </p>
-          ) : (
-            <></>
           )}
         </>
       ) : (

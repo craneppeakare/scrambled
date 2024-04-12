@@ -153,18 +153,48 @@ export default function SettingsIconButton({
             />
             <FormControlLabel
               control={<Switch />}
-              label="Enable Pro Controls"
-              onChange={() => console.log("beep boop TODO")}
-              disabled // TODO - remove disable this!
-            />
-            <FormControlLabel
-              control={<Switch />}
               label="Enable blank tiles"
               checked={configs.blankTilesOn}
               onChange={() => {
                 addConfig(configs, {
                   key: "blankTilesOn",
                   value: !configs.blankTilesOn,
+                });
+                setRefreshModal(!refreshModal);
+              }}
+            />
+            <FormControlLabel
+              control={<Switch />}
+              label="Disable attempts counter (Infinite tries)"
+              checked={configs.infiniteTriesOn}
+              onChange={() => {
+                addConfig(configs, {
+                  key: "infiniteTriesOn",
+                  value: !configs.infiniteTriesOn,
+                });
+                setRefreshModal(!refreshModal);
+              }}
+            />
+            <FormControlLabel
+              control={<Switch />}
+              label="Enable hard mode (Find ALL answers)"
+              checked={configs.hardModeOn}
+              onChange={() => {
+                addConfig(configs, {
+                  key: "hardModeOn",
+                  value: !configs.hardModeOn,
+                });
+                setRefreshModal(!refreshModal);
+              }}
+            />
+            <FormControlLabel
+              control={<Switch />}
+              label="Choose by word rather than by tiles (Harder words more common)"
+              checked={configs.evenDistributionOn}
+              onChange={() => {
+                addConfig(configs, {
+                  key: "evenDistributionOn",
+                  value: !configs.evenDistributionOn,
                 });
                 setRefreshModal(!refreshModal);
               }}
