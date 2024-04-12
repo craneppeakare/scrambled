@@ -1,4 +1,3 @@
-import { PropsWithChildren } from "react";
 import CSS from "csstype";
 import Modal from "@mui/material/Modal";
 import { Box, useMediaQuery } from "@mui/material";
@@ -43,11 +42,10 @@ const mobileModalStyles: CSS.Properties = {
   color: "white",
 };
 
-interface TileSelectorModalProps extends PropsWithChildren<any> {
+interface TileSelectorModalProps {
   modalOpen: boolean;
   onClose: () => any;
   callback: (s: string) => any;
-  color?: any;
   ariaLabel?: string;
 }
 
@@ -55,9 +53,7 @@ export default function TileSelectorModal({
   callback,
   modalOpen,
   onClose,
-  color = "primary",
   ariaLabel = "",
-  children,
 }: TileSelectorModalProps) {
   const isMobile = useMediaQuery("(max-width:800px)");
   const alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
@@ -67,11 +63,10 @@ export default function TileSelectorModal({
         {alpha.map((a, i) => (
           <Tile
             key={i}
+            tile={{ letter: a, isBlank: false }}
             onClick={() => {
               callback(a);
             }}
-            highlight="primary"
-            letter={a}
           />
         ))}
       </Box>

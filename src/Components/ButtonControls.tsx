@@ -2,6 +2,7 @@ import { Button, useMediaQuery } from "@mui/material";
 import ModalButton from "./ModalButton";
 import SubmitModalButton from "./SubmitModalButton";
 import CSS from "csstype";
+import { TTile } from "../Types/Tile";
 
 const styles: CSS.Properties = {
   fontSize: "24px",
@@ -22,10 +23,9 @@ const rowStyles: CSS.Properties = {
 
 interface ButtonControlsProps {
   answerKeyState: string[];
-  selectionState: (string | null)[];
+  selectionState: (TTile | null)[];
   onClearCallback: Function;
   onShuffleCallback: Function;
-  onSubmitCallback: Function;
   getNewWord: () => void;
 }
 
@@ -34,7 +34,6 @@ export default function ButtonControls({
   selectionState,
   onClearCallback,
   onShuffleCallback,
-  onSubmitCallback,
   getNewWord,
 }: ButtonControlsProps) {
   const isMobile = useMediaQuery("(max-width:800px)");
@@ -66,7 +65,6 @@ export default function ButtonControls({
       <SubmitModalButton
         submission={selectionState}
         answerkey={answerKeyState}
-        onSubmitCallback={onSubmitCallback}
         successCloseEffect={() => getNewWord()}
       >
         Submit

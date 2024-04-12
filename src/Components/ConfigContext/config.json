@@ -1,8 +1,9 @@
 {
   "wordlist": "wordfind",
   "showTileScore": true,
-  "easyModeEnabled": false,
   "proControlsOn": false,
   "blankTilesOn": true,
+  "hardModeOn": false,
+  "maxTries": 5,
   "handSize": 7
 }

@@ -1,5 +1,6 @@
 import CSS from "csstype";
 import Tile from "./Tile";
+import { TTile } from "../Types/Tile";
 
 const styles: CSS.Properties = {
   display: "inline-flex",
@@ -8,24 +9,16 @@ const styles: CSS.Properties = {
 };
 
 interface RackProps {
-  onClick: (i: number, letter: string) => void;
-  rack: (string | null)[];
-  highlight: ("primary" | "success" | "error" | "info")[];
+  onClick: (i: number) => void;
+  rack: (TTile | null)[];
 }
 
-export default function Rack({ onClick, rack, highlight }: RackProps) {
+export default function Rack({ onClick, rack }: RackProps) {
   return (
     <div style={styles}>
-      <>
-        {rack.map((letter, idx) => (
-          <Tile
-            letter={letter}
-            onClick={(letter) => onClick(idx, letter)}
-            highlight={highlight[idx]}
-            key={idx}
-          />
-        ))}
-      </>
+      {rack.map((tile, idx) => (
+        <Tile key={idx} tile={tile} onClick={() => onClick(idx)} />
+      ))}
     </div>
   );
 }

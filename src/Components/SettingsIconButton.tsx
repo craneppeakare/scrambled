@@ -153,18 +153,6 @@ export default function SettingsIconButton({
             />
             <FormControlLabel
               control={<Switch />}
-              label="Enable easy mode (Gives hints when submitting)"
-              checked={configs.easyModeEnabled}
-              onChange={() => {
-                addConfig(configs, {
-                  key: "easyModeEnabled",
-                  value: !configs.easyModeEnabled,
-                });
-                setRefreshModal(!refreshModal);
-              }}
-            />
-            <FormControlLabel
-              control={<Switch />}
               label="Enable Pro Controls"
               onChange={() => console.log("beep boop TODO")}
               disabled // TODO - remove disable this!

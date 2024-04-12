@@ -3,6 +3,7 @@ import { useContext } from "react";
 import CSS from "csstype";
 import { TilePointValue } from "../Utilities/Constants";
 import { ConfigContext } from "./ConfigContext";
+import { TTile } from "../Types/Tile";
 
 const ButtonStyles: CSS.Properties = {
   width: "100px",
@@ -55,36 +56,33 @@ const mobileScoreStyles: CSS.Properties = {
 };
 
 interface TileProps {
-  onClick: (letter: string) => void;
-  highlight: "primary" | "success" | "error" | "info";
-  letter: string | null;
+  onClick: () => void;
+  tile: TTile | null;
 }
 
-export default function Tile({ onClick, highlight, letter = null }: TileProps) {
+export default function Tile({ onClick, tile = null }: TileProps) {
   const { configs } = useContext(ConfigContext);
   const themes = useTheme();
-  const score = letter != null ? TilePointValue[letter] : "";
+  const score = tile != null ? TilePointValue[tile.letter] : "";
   const isMobile = useMediaQuery("(max-width:800px)");
 
   return (
     <div style={{ position: "relative", color: themes.palette.primary.main }}>
-      {letter != null ? (
+      {tile != null ? (
         <>
           <Button
             className="tile"
-            color={
-              letter === " " && highlight === "primary" ? "info" : highlight
-            }
-            aria-label={letter + "-tile-" + score + "-points"}
-            onClick={() => onClick(letter)}
+            color={tile.isBlank ? "info" : "primary"}
+            aria-label={tile.letter + "-tile-" + score + "-points"}
+            onClick={() => onClick()}
             sx={isMobile ? mobileButtonStyles : ButtonStyles}
             variant="outlined"
           >
-            {letter}
+            {tile.letter}
           </Button>
           {configs.showTileScore === true ? (
             <p style={isMobile ? mobileScoreStyles : scoreStyles}>
-              {highlight === "info" ? 0 : score}
+              {tile.isBlank ? 0 : score}
             </p>
           ) : (
             <></>

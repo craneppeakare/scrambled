@@ -3,6 +3,7 @@ import CSS from "csstype";
 import Button from "@mui/material/Button";
 import Modal from "@mui/material/Modal";
 import { Box, useMediaQuery } from "@mui/material";
+import { TTile } from "../Types/Tile";
 
 const styles: CSS.Properties = {
   fontSize: "24px",
@@ -57,10 +58,9 @@ const mobileModalStyles: CSS.Properties = {
 };
 
 interface SubmitModalButtonProps extends PropsWithChildren<any> {
-  submission: (string | null)[];
+  submission: (TTile | null)[];
   answerkey: string[];
   successCloseEffect?: () => any;
-  onSubmitCallback: Function;
   color?: any;
   ariaLabel?: string;
 }
@@ -69,7 +69,6 @@ export default function SubmitModalButton({
   submission,
   answerkey,
   successCloseEffect,
-  onSubmitCallback,
   color = "primary",
   ariaLabel = "",
   children,
@@ -80,17 +79,16 @@ export default function SubmitModalButton({
   const isMobile = useMediaQuery("(max-width:800px)");
 
   function submitSelection() {
-    if (submission.some((c) => c == null)) {
+    if (submission.some((t) => t == null)) {
       setUseTilesModalOpen(true);
       return;
     }
-    let s = [...submission].join("");
+    let s = submission.map((t) => t!.letter).join("");
     if (answerkey.indexOf(s) !== -1) {
       setWinModalOpen(true);
     } else {
       setInvalidModalOpen(true);
     }
-    onSubmitCallback();
   }
 
   return (
