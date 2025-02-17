@@ -54,9 +54,7 @@ const mobileModalStyles: CSS.Properties = {
   fontSize: "18px",
 };
 
-type InfoIconButtonProps = {};
-
-export default function SettingsIconButton({}: InfoIconButtonProps) {
+export default function SettingsIconButton() {
   const [modalOpen, setModalOpen] = useState(false);
   const isMobile = useMediaQuery("(max-width:800px)");
 

@@ -22,10 +22,10 @@ export default function Game() {
   const [tileSelectorModalOpen, setTileSelectorModalOpen] = useState(false);
   const [answerKeyState, setAnswerKeyState] = useState<string[]>([]);
   const [selectionState, setSelectionState] = useState<(TTile | null)[]>(
-    Array(configs.handSize).fill(null)
+    Array(configs.handSize).fill(null),
   );
   const [rackState, setRackState] = useState<(TTile | null)[]>(
-    Array(configs.handSize).fill(null)
+    Array(configs.handSize).fill(null),
   );
   const [blankIdx, setBlankIdx] = useState(0);
   const [attemptsMade, setAttemptsMade] = useState(0);
@@ -143,7 +143,7 @@ export default function Game() {
 
       answers = findAllAnswers(
         newRack.map((t) => t?.letter).join(""),
-        wordlist
+        wordlist,
       );
     }
 
@@ -154,6 +154,7 @@ export default function Game() {
     setRackState(shuffleRack(newRack));
   }
 
+  // eslint-disable-next-line
   useEffect(() => getNewWord(), []);
 
   return (

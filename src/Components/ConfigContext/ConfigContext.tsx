@@ -3,7 +3,7 @@ import { ConfigContextState } from "./types";
 
 const contextDefaultValues: ConfigContextState = {
   configs: {},
-  addConfig: () => {},
+  addConfig: () => { },
 };
 
 export const ConfigContext =
@@ -11,7 +11,7 @@ export const ConfigContext =
 
 type ConfigObject = { key: string; value: any };
 
-type ProviderPorps = { configJson: any; children: SVGRectElement };
+// type ProviderPorps = { configJson: any; children: SVGRectElement };
 
 export default function ConfigsProvider(props: any) {
   const [configs, setConfigs] = useState<any>(props.configJson);
